@@ -22,8 +22,6 @@ import ru.supernacho.tkb.tz.moneytransfer.view.MainView;
 @InjectViewState
 public class MainActivityPresenter extends MvpPresenter<MainView> implements IMainPresenter{
     private Scheduler uiScheduler;
-    private User user;
-
     @Inject
     IPersistenceRepository repository;
 
@@ -32,17 +30,19 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
 
     public MainActivityPresenter(Scheduler uiScheduler) {
         this.uiScheduler = uiScheduler;
-        this.user = userRepository.getCurrentUser();
     }
 
-    public void startTransfer(int senderPos, int benefeciaryPos){
+    public void startTransfer(int senderPos, int beneficiaryPos){
 
-//        repository.addCards(newSenderCard, newBeneficiaryCard, user.getToken());
-//        getCardsData();
+        repository.addCards(repository.getSenderCards().get(senderPos),
+                repository.getBeneficiaryCards().get(beneficiaryPos),
+                userRepository.getCurrentUser().getToken());
+        getCardsData();
     }
 
     public void setUser(String token){
         userRepository.setUser(token);
+        getCardsData();
     }
 
     public List<Card> getSenderCards(){
@@ -54,15 +54,14 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     }
 
     public void getCardsData(){
-        repository.getCardsData(user.getToken())
+        repository.getCardsData(userRepository.getCurrentUser().getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)
                 .subscribe(new DisposableObserver<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
-                            repository.getSenderCards();
-                            repository.getBeneficiaryCards();
+                            getViewState().updateAdapters();
                         }
                     }
 

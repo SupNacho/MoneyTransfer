@@ -5,26 +5,28 @@ import java.util.List;
 
 public class CardsCollection {
     private List<List<Card>> collection;
-    private  List<Card> senderCards;
-    private  List<Card> beneficiaryCards;
 
     public CardsCollection() {
         this.collection = new ArrayList<>();
-        this.senderCards = new ArrayList<>();
-        this.beneficiaryCards = new ArrayList<>();
-        collection.add(senderCards);
-        collection.add(beneficiaryCards);
+        collection.add(new ArrayList<>());
+        collection.add(new ArrayList<>());
     }
 
     public List<List<Card>> getCollection() {
         return collection;
     }
 
+    public void updateCollection(CardsCollection tempCollection){
+        collection.clear();
+        collection.addAll(tempCollection.getCollection());
+        System.out.println("ss");
+    }
+
     public List<Card> getSenderCards() {
-        return senderCards;
+        return collection.get(0);
     }
 
     public List<Card> getBeneficiaryCards() {
-        return beneficiaryCards;
+        return collection.get(1);
     }
 }

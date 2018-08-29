@@ -16,6 +16,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.internal.operators.observable.ObservableReduceMaybe;
 import io.reactivex.schedulers.Schedulers;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
+import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardConstants;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 
 public class PersistenceRepository implements IPersistenceRepository {
@@ -42,18 +43,27 @@ public class PersistenceRepository implements IPersistenceRepository {
 
     @Override
     public void addCards(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
-        CardsCollection collection = new CardsCollection();
         collection.getSenderCards().add(newSenderCard);
         collection.getBeneficiaryCards().add(newBeneficiaryCard);
         persistenceIO.saveData(userToken, gson.toJson(collection));
+        System.out.println("ss");
     }
 
     @Override
     public Observable<Boolean> getCardsData(String userToken) {
         return Observable.create( emit -> {
             String result = persistenceIO.loadCardsData(userToken);
-            collection = gson.fromJson(result, CardsCollection.class);
+            updateCollection(gson.fromJson(result, CardsCollection.class));
             emit.onNext(true);
         });
+    }
+
+    private void updateCollection(CardsCollection tempCollection) {
+        collection.getSenderCards().clear();
+        collection.getSenderCards().addAll(tempCollection.getSenderCards());
+        collection.getSenderCards().add(new Card(CardConstants.NEW_CARD));
+        collection.getBeneficiaryCards().clear();
+        collection.getBeneficiaryCards().addAll(tempCollection.getBeneficiaryCards());
+        collection.getBeneficiaryCards().add(new Card(CardConstants.NEW_CARD));
     }
 }

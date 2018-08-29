@@ -10,6 +10,7 @@ import ru.supernacho.tkb.tz.moneytransfer.App;
 public class PersistenceIO implements IPersistenceIO {
 
     private static final String CARDS_COLLECTION = "cardsCollection";
+    private static final String DEF_COLLECTION = "{\"collection\":[[],[]]}";
 
     @Inject
     App app;
@@ -34,8 +35,8 @@ public class PersistenceIO implements IPersistenceIO {
             SharedPreferences sharedPreferences = app
                     .getSharedPreferences(userToken, Context.MODE_PRIVATE);
             if (sharedPreferences.contains(CARDS_COLLECTION))
-                return sharedPreferences.getString(CARDS_COLLECTION, "{[]}");
+                return sharedPreferences.getString(CARDS_COLLECTION, DEF_COLLECTION);
         }
-        return "{[]}";
+        return DEF_COLLECTION;
     }
 }

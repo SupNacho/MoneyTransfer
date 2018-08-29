@@ -11,11 +11,11 @@ import ru.supernacho.tkb.tz.moneytransfer.R;
 
 public class CachedCardView extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_card_number)
-    TextView tvCardNumber;
+    public TextView tvCardNumber;
     @BindView(R.id.tv_bank_label)
-    TextView tvBanklabel;
+    public TextView tvBanklabel;
     @BindView(R.id.et_cached_cvv)
-    TextInputEditText etCacheCVV;
+    public TextInputEditText etCacheCVV;
 
     public CachedCardView(View itemView, boolean isBeneficiary) {
         super(itemView);

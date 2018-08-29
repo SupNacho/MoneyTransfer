@@ -3,7 +3,9 @@ package ru.supernacho.tkb.tz.moneytransfer.view;
 import android.support.design.widget.TextInputEditText;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -18,12 +20,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.supernacho.tkb.tz.moneytransfer.App;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
+import ru.supernacho.tkb.tz.moneytransfer.view.adapter.BeneficiaryRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.SenderRvAdapter;
+import ru.supernacho.tkb.tz.moneytransfer.view.alert.Alert;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView{
 
     private SenderRvAdapter senderRvAdapter;
-    private SenderRvAdapter beneficiaryRvAdapter;
+    private BeneficiaryRvAdapter beneficiaryRvAdapter;
 
     @BindView(R.id.rv_sender_cards)
     RecyclerView rvSenderList;
@@ -44,12 +48,25 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         App.getInstance().getAppComponent().inject(this);
+        initRecyclerViews();
         presenter.getCardsData();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        senderRvAdapter = new SenderRvAdapter();
-        rvSenderList.setLayoutManager(layoutManager);
-        rvBeneficiaryList.setLayoutManager(layoutManager);
+    }
+
+    private void initRecyclerViews() {
+        SnapHelper senderSnapHelper = new PagerSnapHelper();
+        SnapHelper beneSnapHelper = new PagerSnapHelper();
+        LinearLayoutManager senderLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager beneficiaryLayoutManager = new LinearLayoutManager(this);
+        senderLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        beneficiaryLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        senderRvAdapter = new SenderRvAdapter(presenter);
+        beneficiaryRvAdapter = new BeneficiaryRvAdapter(presenter);
+        rvSenderList.setLayoutManager(senderLayoutManager);
+        rvBeneficiaryList.setLayoutManager(beneficiaryLayoutManager);
+        rvSenderList.setAdapter(senderRvAdapter);
+        rvBeneficiaryList.setAdapter(beneficiaryRvAdapter);
+        senderSnapHelper.attachToRecyclerView(rvSenderList);
+        beneSnapHelper.attachToRecyclerView(rvBeneficiaryList);
     }
 
     @ProvidePresenter
@@ -65,8 +82,21 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
     }
 
     @Override
-    public void updateAdapters() {
+    protected void onResume() {
+        super.onResume();
+        Alert.show(this, presenter);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void updateAdapters() {
+        senderRvAdapter.notifyDataSetChanged();
+        beneficiaryRvAdapter.notifyDataSetChanged();
     }
 
 
