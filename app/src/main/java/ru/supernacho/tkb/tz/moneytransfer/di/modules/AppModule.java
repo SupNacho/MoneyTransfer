@@ -1,4 +1,4 @@
-package ru.supernacho.tkb.tz.moneytransfer.di.module;
+package ru.supernacho.tkb.tz.moneytransfer.di.modules;
 
 import dagger.Module;
 import dagger.Provides;

@@ -1,4 +1,4 @@
-package ru.supernacho.tkb.tz.moneytransfer;
+package ru.supernacho.tkb.tz.moneytransfer.view;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;

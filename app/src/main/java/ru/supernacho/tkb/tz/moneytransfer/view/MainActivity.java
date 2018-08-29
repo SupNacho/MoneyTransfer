@@ -1,17 +1,23 @@
-package ru.supernacho.tkb.tz.moneytransfer;
+package ru.supernacho.tkb.tz.moneytransfer.view;
 
 import android.support.design.widget.TextInputEditText;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
+import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import ru.supernacho.tkb.tz.moneytransfer.App;
+import ru.supernacho.tkb.tz.moneytransfer.R;
+import ru.supernacho.tkb.tz.moneytransfer.presenter.IMainPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
-import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView{
 
@@ -22,6 +28,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
     @BindView(R.id.et_amount_input)
     TextInputEditText etAmount;
 
+    @Inject
+    App app;
+
     @InjectPresenter
     MainActivityPresenter presenter;
 
@@ -30,11 +39,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        App.getInstance().getAppComponent().inject(this);
 
     }
 
     @ProvidePresenter
-    MainActivityPresenter providePresenter(){
-        return new MainActivityPresenter();
+    IMainPresenter providePresenter(){
+        IMainPresenter presenter = new MainActivityPresenter(AndroidSchedulers.mainThread());
+        App.getInstance().getAppComponent().inject(presenter);
+        return presenter;
     }
 }
