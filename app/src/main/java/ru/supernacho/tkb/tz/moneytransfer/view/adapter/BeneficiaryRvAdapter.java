@@ -13,11 +13,11 @@ import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.view.NewCardView;
 
-public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private MainActivityPresenter presenter;
     private List<Card> cards;
 
-    public SenderRvAdapter(MainActivityPresenter presenter) {
+    public BeneficiaryRvAdapter(MainActivityPresenter presenter) {
         this.presenter = presenter;
         this.cards = presenter.getSenderCards();
     }

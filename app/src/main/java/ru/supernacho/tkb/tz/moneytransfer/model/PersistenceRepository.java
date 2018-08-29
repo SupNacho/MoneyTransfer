@@ -10,15 +10,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.internal.operators.observable.ObservableReduceMaybe;
 import io.reactivex.schedulers.Schedulers;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 
 public class PersistenceRepository implements IPersistenceRepository {
-    private List<Card> senderCards = new ArrayList<>();
-    private List<Card> beneficiaryCards = new ArrayList<>();
+    private CardsCollection collection = new CardsCollection();
     private Gson gson;
 
     @Inject
@@ -31,16 +32,16 @@ public class PersistenceRepository implements IPersistenceRepository {
 
     @Override
     public List<Card> getSenderCards() {
-        return senderCards;
+        return collection.getSenderCards();
     }
 
     @Override
     public List<Card> getBeneficiaryCards() {
-        return beneficiaryCards;
+        return collection.getBeneficiaryCards();
     }
 
     @Override
-    public void addCard(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
+    public void addCards(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
         CardsCollection collection = new CardsCollection();
         collection.getSenderCards().add(newSenderCard);
         collection.getBeneficiaryCards().add(newBeneficiaryCard);
@@ -48,20 +49,11 @@ public class PersistenceRepository implements IPersistenceRepository {
     }
 
     @Override
-    public void getData(String userToken) {
-        // TODO: 28.08.2018 переделать без RX из IO
-        Disposable disposeSender = persistenceIO.loadSenderData(userToken)
-                .subscribeOn(Schedulers.io())
-                .subscribe(s -> {
-                    senderCards.clear();
-                    senderCards.addAll(Arrays.asList(gson.fromJson(s, Card[].class)));
-                });
-
-        Disposable disposeBeneficiary = persistenceIO.loadBeneficiaryData(userToken)
-                .subscribeOn(Schedulers.io())
-                .subscribe(s ->{
-                    beneficiaryCards.clear();
-                    beneficiaryCards.addAll(Arrays.asList(gson.fromJson(s, Card[].class)));
-                });
+    public Observable<Boolean> getCardsData(String userToken) {
+        return Observable.create( emit -> {
+            String result = persistenceIO.loadCardsData(userToken);
+            collection = gson.fromJson(result, CardsCollection.class);
+            emit.onNext(true);
+        });
     }
 }

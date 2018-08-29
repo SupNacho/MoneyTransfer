@@ -5,14 +5,11 @@ import android.content.SharedPreferences;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import ru.supernacho.tkb.tz.moneytransfer.App;
 
 public class PersistenceIO implements IPersistenceIO {
 
-    private static final String SENDER_CARDS = "senderCards";
-    private static final String BENEFICIARY_CARDS = "beneficiaryCards";
+    private static final String CARDS_COLLECTION = "cardsCollection";
 
     @Inject
     App app;
@@ -22,29 +19,23 @@ public class PersistenceIO implements IPersistenceIO {
     }
 
     @Override
-    public void saveData(String userToken, String senderCards, String beneficiaryCards) {
-        SharedPreferences.Editor editor = app.
-                getSharedPreferences(userToken, Context.MODE_PRIVATE).edit();
-        editor.putString(SENDER_CARDS, senderCards);
-        editor.putString(BENEFICIARY_CARDS, beneficiaryCards);
-        editor.apply();
+    public void saveData(String userToken, String cardsCollection) {
+        if (userToken != null) {
+            SharedPreferences.Editor editor = app.
+                    getSharedPreferences(userToken, Context.MODE_PRIVATE).edit();
+            editor.putString(CARDS_COLLECTION, cardsCollection);
+            editor.apply();
+        }
     }
 
     @Override
-    public String loadSenderData(String userToken) {
-        return getStringData(userToken, SENDER_CARDS);
-    }
-
-    @Override
-    public String loadBeneficiaryData(String userToken) {
-        return getStringData(userToken, BENEFICIARY_CARDS);
-    }
-
-    private String getStringData(String userToken, String key) {
-        SharedPreferences sharedPreferences = app
-                .getSharedPreferences(userToken, Context.MODE_PRIVATE);
-        if (sharedPreferences.contains(key))
-            return sharedPreferences.getString(key, "[]");
-        return "[]";
+    public String loadCardsData(String userToken) {
+        if (userToken != null) {
+            SharedPreferences sharedPreferences = app
+                    .getSharedPreferences(userToken, Context.MODE_PRIVATE);
+            if (sharedPreferences.contains(CARDS_COLLECTION))
+                return sharedPreferences.getString(CARDS_COLLECTION, "{[]}");
+        }
+        return "{[]}";
     }
 }
