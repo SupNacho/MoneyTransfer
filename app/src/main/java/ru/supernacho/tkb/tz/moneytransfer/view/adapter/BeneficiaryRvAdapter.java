@@ -26,8 +26,7 @@ public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if (cards.get(position).getNumber().equals(CardConstants.NEW_CARD))
-            return ViewType.NEW_CARD;
+        if (cards.get(position).isNewCard()) return ViewType.NEW_CARD;
         else return ViewType.CACHED_CARD;
     }
 
@@ -49,14 +48,14 @@ public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int viewType = holder.getItemViewType();
         Card card = cards.get(position);
-        switch (viewType) {
-            case ViewType.CACHED_CARD:
-                CachedCardView cachedCardView = (CachedCardView) holder;
-                cachedCardView.tvCardNumber.setText(card.getNumber());
-                cachedCardView.tvBanklabel.setText(card.getBankName());
-                break;
-            default:
-                break;
+        if (viewType == ViewType.CACHED_CARD) {
+            CachedCardView cachedCardView = (CachedCardView) holder;
+            cachedCardView.tvCardNumber.setText(card.getNumber());
+            cachedCardView.tvBanklabel.setText(card.getBankName());
+            cachedCardView.setCard(card);
+        } else {
+            NewCardView newCardView = (NewCardView) holder;
+            newCardView.setCard(card);
         }
     }
 

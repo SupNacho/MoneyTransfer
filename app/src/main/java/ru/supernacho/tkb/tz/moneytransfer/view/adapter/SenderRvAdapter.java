@@ -2,8 +2,6 @@ package ru.supernacho.tkb.tz.moneytransfer.view.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import java.util.List;
 
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
-import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardConstants;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.view.CachedCardView;
 import ru.supernacho.tkb.tz.moneytransfer.view.NewCardView;
@@ -28,8 +25,7 @@ public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (cards.get(position).getNumber().equals(CardConstants.NEW_CARD))
-            return ViewType.NEW_CARD;
+        if (cards.get(position).isNewCard()) return ViewType.NEW_CARD;
         else return ViewType.CACHED_CARD;
     }
 
@@ -56,8 +52,11 @@ public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 CachedCardView cachedCardView = (CachedCardView) holder;
                 cachedCardView.tvCardNumber.setText(card.getNumber());
                 cachedCardView.tvBanklabel.setText(card.getBankName());
+                cachedCardView.setCard(card);
                 break;
             default:
+                NewCardView newCardView = (NewCardView) holder;
+                newCardView.setCard(card);
                 break;
         }
     }

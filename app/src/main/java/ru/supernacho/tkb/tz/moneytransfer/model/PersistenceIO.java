@@ -10,7 +10,7 @@ import ru.supernacho.tkb.tz.moneytransfer.App;
 public class PersistenceIO implements IPersistenceIO {
 
     private static final String CARDS_COLLECTION = "cardsCollection";
-    private static final String DEF_COLLECTION = "{\"collection\":[[],[]]}";
+    private static final String DEF_COLLECTION = "{\"collection\":{\"receivers\":[],\"senders\":[]}}";
 
     @Inject
     App app;

@@ -6,6 +6,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
+import android.util.Log;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -23,6 +27,7 @@ import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.BeneficiaryRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.SenderRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.alert.Alert;
+import ru.supernacho.tkb.tz.moneytransfer.view.filters.DecimalDigitInputFilter;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView{
 
@@ -49,7 +54,33 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
         ButterKnife.bind(this);
         App.getInstance().getAppComponent().inject(this);
         initRecyclerViews();
+        initViews();
         presenter.getCardsData();
+        Alert.show(this, presenter);
+    }
+
+    private void initViews() {
+        etAmount.setFilters(new InputFilter[] {new DecimalDigitInputFilter(2)});
+        etAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("++", "sequence" + s.toString() + " start" +  start + " count: " + count + " before " + before);
+                if (s.length() > 1 && s.charAt(0) == '0' && s.charAt(1) != '.'){
+                    etAmount.setText("");
+                    etAmount.append(s.subSequence(1, s.length()));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void initRecyclerViews() {
@@ -79,18 +110,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
     @OnClick(R.id.btn_transfer)
     public void onClickTransfer(){
         presenter.startTransfer(0,0);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Alert.show(this, presenter);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     @Override

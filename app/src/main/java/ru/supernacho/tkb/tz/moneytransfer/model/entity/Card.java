@@ -4,9 +4,13 @@ public class Card {
     private String number;
     private String expire;
     private String bankName;
+    private transient String cvv;
+    private transient boolean isNewCard;
 
     public Card(String number) {
         this.number = number;
+        if (number.equals(CardConstants.NEW_CARD)) this.isNewCard = true;
+        else this.isNewCard = false;
     }
 
     public Card(String number, String expire, String bankName) {
@@ -37,6 +41,22 @@ public class Card {
 
     public void setBankName(String bankName) {
         this.bankName = bankName;
+    }
+
+    public String getCvv() {
+        return cvv;
+    }
+
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
+
+    public boolean isNewCard() {
+        return isNewCard;
+    }
+
+    public void setNewCard(boolean newCard) {
+        isNewCard = newCard;
     }
 
     @Override

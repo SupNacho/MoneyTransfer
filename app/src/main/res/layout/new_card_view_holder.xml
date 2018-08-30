@@ -30,7 +30,7 @@
             android:id="@+id/et_exp_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="date"
             android:hint="MM/YY"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -45,7 +45,8 @@
             android:id="@+id/et_cvv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberPassword"
+            android:maxLength="3"
             android:hint="CVV2"/>
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>
