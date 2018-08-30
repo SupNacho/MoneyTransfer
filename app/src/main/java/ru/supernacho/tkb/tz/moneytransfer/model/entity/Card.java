@@ -38,4 +38,19 @@ public class Card {
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+
+        Card card = (Card) o;
+
+        return getNumber() != null ? getNumber().equals(card.getNumber()) : card.getNumber() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return getNumber() != null ? getNumber().hashCode() : 0;
+    }
 }

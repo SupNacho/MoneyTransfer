@@ -16,14 +16,19 @@ public class CardsCollection {
         return collection;
     }
 
-    public void updateCollection(CardsCollection tempCollection){
-        collection.clear();
-        collection.addAll(tempCollection.getCollection());
-        System.out.println("ss");
-    }
-
     public List<Card> getSenderCards() {
         return collection.get(0);
+    }
+
+    public void addToSenders(Card card){
+        if (!collection.get(0).contains(card)){
+            collection.get(0).add(card);
+        }
+    }
+    public void addToBeneficiary(Card card){
+        if (!collection.get(1).contains(card)){
+            collection.get(1).add(card);
+        }
     }
 
     public List<Card> getBeneficiaryCards() {

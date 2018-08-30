@@ -43,8 +43,8 @@ public class PersistenceRepository implements IPersistenceRepository {
 
     @Override
     public void addCards(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
-        collection.getSenderCards().add(newSenderCard);
-        collection.getBeneficiaryCards().add(newBeneficiaryCard);
+        collection.addToSenders(newSenderCard);
+        collection.addToBeneficiary(newBeneficiaryCard);
         persistenceIO.saveData(userToken, gson.toJson(collection));
         System.out.println("ss");
     }
@@ -61,9 +61,9 @@ public class PersistenceRepository implements IPersistenceRepository {
     private void updateCollection(CardsCollection tempCollection) {
         collection.getSenderCards().clear();
         collection.getSenderCards().addAll(tempCollection.getSenderCards());
-        collection.getSenderCards().add(new Card(CardConstants.NEW_CARD));
+        collection.addToSenders(new Card(CardConstants.NEW_CARD));
         collection.getBeneficiaryCards().clear();
         collection.getBeneficiaryCards().addAll(tempCollection.getBeneficiaryCards());
-        collection.getBeneficiaryCards().add(new Card(CardConstants.NEW_CARD));
+        collection.addToBeneficiary(new Card(CardConstants.NEW_CARD));
     }
 }
