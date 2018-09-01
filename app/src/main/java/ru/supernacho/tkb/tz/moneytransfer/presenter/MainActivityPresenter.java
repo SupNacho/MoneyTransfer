@@ -5,7 +5,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
 import java.util.List;
-import java.util.Stack;
 
 import javax.inject.Inject;
 
@@ -17,14 +16,15 @@ import ru.supernacho.tkb.tz.moneytransfer.model.IUserRepository;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
+import ru.supernacho.tkb.tz.moneytransfer.utils.RecyclerPositionHolder;
 import ru.supernacho.tkb.tz.moneytransfer.view.ErrorTypes;
 import ru.supernacho.tkb.tz.moneytransfer.view.MainView;
 
 @InjectViewState
 public class MainActivityPresenter extends MvpPresenter<MainView> implements IMainPresenter{
     private Scheduler uiScheduler;
-    private Stack<Integer> senderPosHolder;
-    private Stack<Integer> beneficiaryPosHolder;
+    private RecyclerPositionHolder senderPosHolder;
+    private RecyclerPositionHolder beneficiaryPosHolder;
     private CardsCollection cardsCollection;
     private Disposable disposableGetter;
 
@@ -36,8 +36,8 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
 
     public MainActivityPresenter(Scheduler uiScheduler) {
         this.uiScheduler = uiScheduler;
-        this.senderPosHolder = new Stack<>();
-        this.beneficiaryPosHolder = new Stack<>();
+        this.senderPosHolder = new RecyclerPositionHolder();
+        this.beneficiaryPosHolder = new RecyclerPositionHolder();
         this.cardsCollection = new CardsCollection();
     }
 
@@ -54,23 +54,23 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     }
 
     public void setSenderPos(int index){
-        senderPosHolder.push(index);
+        senderPosHolder.setPosition(index);
     }
 
     public void checkSenderPos(int index){
-        if (senderPosHolder.peek() == index) senderPosHolder.pop();
+        senderPosHolder.doCorrection(index);
     }
     public void setBeneficiaryPos(int index){
-        beneficiaryPosHolder.push(index);
+        beneficiaryPosHolder.setPosition(index);
     }
 
     public void checkBeneficiaryPos(int index){
-        if (beneficiaryPosHolder.peek() == index) beneficiaryPosHolder.pop();
+        beneficiaryPosHolder.doCorrection(index);
     }
 
     public void startTransfer(String amount){
-        Card senderCard = cardsCollection.getSenderCards().get(senderPosHolder.peek());
-        Card beneficiaryCard = cardsCollection.getBeneficiaryCards().get(beneficiaryPosHolder.peek());
+        Card senderCard = cardsCollection.getSenderCards().get(senderPosHolder.getActualPosition());
+        Card beneficiaryCard = cardsCollection.getBeneficiaryCards().get(beneficiaryPosHolder.getActualPosition());
         if (InputChecker.checkSenderReady(senderCard) && InputChecker.checkBeneficiaryReady(beneficiaryCard)
                 && InputChecker.checkAmount(amount)) {
             getViewState().viewResult(senderCard, beneficiaryCard, amount);

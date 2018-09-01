@@ -10,9 +10,8 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public User setUser(String token) {
+    public void setUser(String token) {
         user.setToken(token);
-        return user;
     }
 
     @Override

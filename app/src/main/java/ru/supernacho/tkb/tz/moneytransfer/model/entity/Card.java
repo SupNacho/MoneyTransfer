@@ -57,10 +57,6 @@ public class Card {
         return isNewCard;
     }
 
-    public void setNewCard(boolean newCard) {
-        isNewCard = newCard;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
