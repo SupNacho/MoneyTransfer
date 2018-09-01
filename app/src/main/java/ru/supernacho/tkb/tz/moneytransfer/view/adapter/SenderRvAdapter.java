@@ -36,10 +36,10 @@ public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         switch (viewType) {
             case ViewType.NEW_CARD:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_card_view_holder, parent, false);
-                return new NewCardView(view, false);
+                return new NewCardView(view, presenter,false);
             default:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cached_card_view, parent, false);
-                return new CachedCardView(view, false);
+                return new CachedCardView(view, presenter,false);
         }
     }
 
@@ -52,11 +52,15 @@ public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 CachedCardView cachedCardView = (CachedCardView) holder;
                 cachedCardView.tvCardNumber.setText(card.getNumber());
                 cachedCardView.tvBanklabel.setText(card.getBankName());
+                cachedCardView.etCacheCVV.setText(null);
                 cachedCardView.setCard(card);
                 break;
             default:
                 NewCardView newCardView = (NewCardView) holder;
                 newCardView.setCard(card);
+                newCardView.etCardNumber.clearComposingText();
+                newCardView.etCVV.clearComposingText();
+                newCardView.etExpDate.clearComposingText();
                 break;
         }
     }

@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -23,13 +24,14 @@ import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.supernacho.tkb.tz.moneytransfer.App;
 import ru.supernacho.tkb.tz.moneytransfer.R;
+import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.BeneficiaryRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.SenderRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.alert.Alert;
 import ru.supernacho.tkb.tz.moneytransfer.view.filters.DecimalDigitInputFilter;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView{
+public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     private SenderRvAdapter senderRvAdapter;
     private BeneficiaryRvAdapter beneficiaryRvAdapter;
@@ -56,11 +58,10 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
         initRecyclerViews();
         initViews();
         presenter.getCardsData();
-        Alert.show(this, presenter);
     }
 
     private void initViews() {
-        etAmount.setFilters(new InputFilter[] {new DecimalDigitInputFilter(2)});
+        etAmount.setFilters(new InputFilter[]{new DecimalDigitInputFilter(2)});
         etAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,8 +70,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("++", "sequence" + s.toString() + " start" +  start + " count: " + count + " before " + before);
-                if (s.length() > 1 && s.charAt(0) == '0' && s.charAt(1) != '.'){
+                Log.d("++", "sequence" + s.toString() + " start" + start + " count: " + count + " before " + before);
+                if (s.length() > 1 && s.charAt(0) == '0' && s.charAt(1) != '.') {
                     etAmount.setText("");
                     etAmount.append(s.subSequence(1, s.length()));
                 }
@@ -101,15 +102,21 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
     }
 
     @ProvidePresenter
-    MainActivityPresenter providePresenter(){
+    MainActivityPresenter providePresenter() {
         MainActivityPresenter presenter = new MainActivityPresenter(AndroidSchedulers.mainThread());
         App.getInstance().getAppComponent().inject(presenter);
         return presenter;
     }
 
     @OnClick(R.id.btn_transfer)
-    public void onClickTransfer(){
-        presenter.startTransfer(0,0);
+    public void onClickTransfer() {
+        presenter.startTransfer(etAmount.getText().toString());
+        etAmount.setText(null);
+    }
+
+    @Override
+    public void requestSignIn() {
+        Alert.showUserChooser(this, presenter);
     }
 
     @Override
@@ -118,5 +125,23 @@ public class MainActivity extends MvpAppCompatActivity implements MainView{
         beneficiaryRvAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void viewResult(Card sender, Card beneficiary, String amount) {
+        Alert.showResult(this, sender, beneficiary, amount);
+        updateAdapters();
+    }
 
+    @Override
+    public void viewError(int errorType) {
+        String msg;
+        switch (errorType) {
+            case ErrorTypes.CARD_DATA_ERROR:
+                msg = "Wrong data in cards field";
+                break;
+            default:
+                msg = "No such error code";
+                break;
+        }
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
 }

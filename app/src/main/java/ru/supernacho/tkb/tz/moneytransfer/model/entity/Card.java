@@ -7,10 +7,12 @@ public class Card {
     private transient String cvv;
     private transient boolean isNewCard;
 
+    public Card(boolean isNewCard) {
+        this.isNewCard = isNewCard;
+    }
+
     public Card(String number) {
         this.number = number;
-        if (number.equals(CardConstants.NEW_CARD)) this.isNewCard = true;
-        else this.isNewCard = false;
     }
 
     public Card(String number, String expire, String bankName) {

@@ -10,6 +10,8 @@ public class InputCheckerTest {
     public void testCheckCard() {
         assertEquals("card number: 4111111111111111", true, InputChecker.checkCard("4111111111111111"));
         assertEquals("card number: 5555555555555599", true, InputChecker.checkCard("5555555555555599"));
+        assertEquals("card number: 0000", false, InputChecker.checkCard("0000"));
+        assertEquals("card number: null", false, InputChecker.checkCard(null));
         assertEquals("corrupted card number: 4111111111111121", false, InputChecker.checkCard("4111111111111121"));
         assertEquals("corrupted card number: 4411115121411121", false, InputChecker.checkCard("4411115121411121"));
         assertEquals("corrupted card number: 4411115121411", false, InputChecker.checkCard("4411115121411"));
@@ -20,8 +22,10 @@ public class InputCheckerTest {
         assertEquals("exp date: 01/19", true, InputChecker.checkDate("01/19"));
         assertEquals("exp date: 01/19", true, InputChecker.checkDate("12/19"));
         assertEquals("exp date: 08/18", true, InputChecker.checkDate("08/18"));
+        assertEquals("exp date: 08/38", true, InputChecker.checkDate("08/38"));
         assertEquals("exp date: 01/18", false, InputChecker.checkDate("01/18"));
         assertEquals("exp date: 01/18", false, InputChecker.checkDate("12/17"));
+        assertEquals("exp date: null", false, InputChecker.checkDate(null));
     }
 
     @Test
@@ -30,5 +34,6 @@ public class InputCheckerTest {
         assertEquals("cvc 365", true, InputChecker.checkCVC("365"));
         assertEquals("cvc 36", true, InputChecker.checkCVC("36"));
         assertEquals("cvc 3652", false, InputChecker.checkCVC("3652"));
+        assertEquals("cvc null", false, InputChecker.checkCVC(null));
     }
 }

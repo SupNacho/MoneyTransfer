@@ -10,7 +10,6 @@ import java.util.List;
 
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
-import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardConstants;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
 import ru.supernacho.tkb.tz.moneytransfer.view.CachedCardView;
 import ru.supernacho.tkb.tz.moneytransfer.view.NewCardView;
@@ -37,10 +36,10 @@ public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (viewType) {
             case ViewType.NEW_CARD:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_card_view_holder, parent, false);
-                return new NewCardView(view, true);
+                return new NewCardView(view, presenter,true);
             default:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cached_card_view, parent, false);
-                return new CachedCardView(view, true);
+                return new CachedCardView(view, presenter, true);
         }
     }
 

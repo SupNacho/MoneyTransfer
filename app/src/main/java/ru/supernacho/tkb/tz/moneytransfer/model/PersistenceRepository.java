@@ -1,22 +1,13 @@
 package ru.supernacho.tkb.tz.moneytransfer.model;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.operators.observable.ObservableReduceMaybe;
-import io.reactivex.schedulers.Schedulers;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
-import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardConstants;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 
 public class PersistenceRepository implements IPersistenceRepository {
@@ -43,15 +34,17 @@ public class PersistenceRepository implements IPersistenceRepository {
 
     @Override
     public void addCards(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
-        collection.addToSenders(newSenderCard);
-        collection.addToBeneficiary(newBeneficiaryCard);
-        persistenceIO.saveData(userToken, gson.toJson(collection));
-        System.out.println("ss");
+        boolean isNewSender = collection.checkSenderDubles(newSenderCard);
+        boolean isNewBeneficiary = collection.checkBeneDubles(newBeneficiaryCard);
+//        if (newSenderCard.isNewCard()) isNewSender = collection.addToSenders(newSenderCard);
+//        if (newBeneficiaryCard.isNewCard()) isNewbeneficiary = collection.addToBeneficiary(newBeneficiaryCard);
+        if (isNewSender || isNewBeneficiary)
+            persistenceIO.saveData(userToken, gson.toJson(collection));
     }
 
     @Override
     public Observable<Boolean> getCardsData(String userToken) {
-        return Observable.create( emit -> {
+        return Observable.create(emit -> {
             String result = persistenceIO.loadCardsData(userToken);
             updateCollection(gson.fromJson(result, CardsCollection.class));
             emit.onNext(true);
@@ -59,11 +52,9 @@ public class PersistenceRepository implements IPersistenceRepository {
     }
 
     private void updateCollection(CardsCollection tempCollection) {
-        collection.getSenderCards().clear();
-        collection.getSenderCards().addAll(tempCollection.getSenderCards());
-        collection.addToSenders(new Card(CardConstants.NEW_CARD));
-        collection.getBeneficiaryCards().clear();
-        collection.getBeneficiaryCards().addAll(tempCollection.getBeneficiaryCards());
-        collection.addToBeneficiary(new Card(CardConstants.NEW_CARD));
+        collection.addAllToSenders(tempCollection.getSenderCards());
+        collection.addToSenders(new Card(true));
+        collection.addAllToBeneficiary(tempCollection.getBeneficiaryCards());
+        collection.addToBeneficiary(new Card(true));
     }
 }
