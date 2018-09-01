@@ -49,20 +49,30 @@ public class SenderRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Card card = cards.get(position);
         switch (viewType) {
             case ViewType.CACHED_CARD:
-                CachedCardView cachedCardView = (CachedCardView) holder;
-                cachedCardView.tvCardNumber.setText(card.getNumber());
-                cachedCardView.tvBanklabel.setText(card.getBankName());
-                cachedCardView.etCacheCVV.setText(null);
-                cachedCardView.setCard(card);
+                prepareCachedCardData((CachedCardView) holder, card);
                 break;
             default:
-                NewCardView newCardView = (NewCardView) holder;
-                newCardView.setCard(card);
-                newCardView.etCardNumber.clearComposingText();
-                newCardView.etCVV.clearComposingText();
-                newCardView.etExpDate.clearComposingText();
+                prepareNewCardData((NewCardView) holder, card);
                 break;
         }
+    }
+
+    private void prepareCachedCardData(@NonNull CachedCardView holder, Card card) {
+        holder.setCard(card);
+        holder.tvCardNumber.setText(card.getNumber());
+        holder.tvBanklabel.setText(card.getBankName());
+        holder.etCacheCVV.setText(null);
+        holder.etCacheCVV.clearFocus();
+    }
+
+    private void prepareNewCardData(@NonNull NewCardView holder, Card card) {
+        holder.setCard(card);
+        holder.etCardNumber.setText(null);
+        holder.etCardNumber.clearFocus();
+        holder.etCVV.setText(null);
+        holder.etCVV.clearFocus();
+        holder.etExpDate.setText(null);
+        holder.etExpDate.clearFocus();
     }
 
     @Override

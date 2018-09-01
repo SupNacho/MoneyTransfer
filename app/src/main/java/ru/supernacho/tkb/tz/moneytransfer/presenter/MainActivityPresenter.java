@@ -71,7 +71,8 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     public void startTransfer(String amount){
         Card senderCard = cardsCollection.getSenderCards().get(senderPosHolder.peek());
         Card beneficiaryCard = cardsCollection.getBeneficiaryCards().get(beneficiaryPosHolder.peek());
-        if (checkSenderReady(senderCard) && checkBeneficiaryReady(beneficiaryCard)) {
+        if (InputChecker.checkSenderReady(senderCard) && InputChecker.checkBeneficiaryReady(beneficiaryCard)
+                && InputChecker.checkAmount(amount)) {
             getViewState().viewResult(senderCard, beneficiaryCard, amount);
             addCards(senderCard, beneficiaryCard);
         } else {
@@ -83,16 +84,6 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
         if (senderCard.isNewCard() || beneficiaryCard.isNewCard())
             repository.addCards(senderCard, beneficiaryCard, userRepository.getCurrentUser().getToken());
         getCardsData();
-    }
-
-    private boolean checkSenderReady(Card sender){
-        return InputChecker.checkCard(sender.getNumber())
-                && InputChecker.checkDate(sender.getExpire())
-                && InputChecker.checkCVC(sender.getCvv());
-    }
-
-    private boolean checkBeneficiaryReady(Card beneficiary){
-        return InputChecker.checkCard(beneficiary.getNumber());
     }
 
     public void setUser(String token){

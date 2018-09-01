@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
+
 public class InputChecker {
     public static boolean checkCard(String cardNumber) {
         if (cardNumber != null && cardNumber.length() > 12) {
@@ -17,11 +19,7 @@ public class InputChecker {
             int sum = 0;
             int length = digits.length;
             for (int i = 0; i < length; i++) {
-
-                // get digits in reverse order
                 int digit = digits[length - i - 1];
-
-                // every 2nd number multiply by 2
                 if (i % 2 == 1) {
                     digit *= 2;
                 }
@@ -50,5 +48,27 @@ public class InputChecker {
 
     public static boolean checkCVC(String cvc) {
         return cvc != null && cvc.toCharArray().length < 4;
+    }
+
+    public static boolean checkAmount(String amount){
+        try {
+            String[] amountSplit = amount.split("\\.");
+            boolean twoDigitAfterDot = amountSplit.length < 2 || (amountSplit[1].length() < 3);
+            double checkAmount = Double.parseDouble(amount);
+            boolean positive = checkAmount > 0;
+            return twoDigitAfterDot && positive;
+        } catch (NumberFormatException e){
+            return false;
+        }
+    }
+
+    public static boolean checkSenderReady(Card sender){
+        return checkCard(sender.getNumber())
+                && checkDate(sender.getExpire())
+                && checkCVC(sender.getCvv());
+    }
+
+    public static boolean checkBeneficiaryReady(Card beneficiary){
+        return checkCard(beneficiary.getNumber());
     }
 }

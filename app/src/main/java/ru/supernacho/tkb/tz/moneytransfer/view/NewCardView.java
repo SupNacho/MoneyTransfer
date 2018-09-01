@@ -69,6 +69,7 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             }
         });
+        etCardNumber.clearFocus();
         etExpDate.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -89,6 +90,7 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             }
         });
+        etExpDate.clearFocus();
         etCVV.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -109,6 +111,7 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             }
         });
+        etCVV.clearFocus();
         itemView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {

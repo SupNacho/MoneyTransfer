@@ -80,6 +80,7 @@ public class CachedCardView extends RecyclerView.ViewHolder {
 
             }
         });
+        etCacheCVV.clearFocus();
     }
 
     public Card getCard() {

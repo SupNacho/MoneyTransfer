@@ -36,7 +36,7 @@ public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (viewType) {
             case ViewType.NEW_CARD:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_card_view_holder, parent, false);
-                return new NewCardView(view, presenter,true);
+                return new NewCardView(view, presenter, true);
             default:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cached_card_view, parent, false);
                 return new CachedCardView(view, presenter, true);
@@ -47,15 +47,26 @@ public class BeneficiaryRvAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int viewType = holder.getItemViewType();
         Card card = cards.get(position);
-        if (viewType == ViewType.CACHED_CARD) {
-            CachedCardView cachedCardView = (CachedCardView) holder;
-            cachedCardView.tvCardNumber.setText(card.getNumber());
-            cachedCardView.tvBanklabel.setText(card.getBankName());
-            cachedCardView.setCard(card);
-        } else {
-            NewCardView newCardView = (NewCardView) holder;
-            newCardView.setCard(card);
+        switch (viewType) {
+            case ViewType.CACHED_CARD:
+                prepareCachedCard((CachedCardView) holder, card);
+                break;
+            default:
+                prepareNewCardData((NewCardView) holder, card);
+                break;
         }
+    }
+
+    private void prepareNewCardData(@NonNull NewCardView holder, Card card) {
+        holder.setCard(card);
+        holder.etCardNumber.setText(null);
+        holder.etCardNumber.clearFocus();
+    }
+
+    private void prepareCachedCard(@NonNull CachedCardView holder, Card card) {
+        holder.setCard(card);
+        holder.tvCardNumber.setText(card.getNumber());
+        holder.tvBanklabel.setText(card.getBankName());
     }
 
     @Override

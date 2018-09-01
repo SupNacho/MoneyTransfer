@@ -2,8 +2,6 @@ package ru.supernacho.tkb.tz.moneytransfer.model;
 
 import com.google.gson.Gson;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.reactivex.Observable;

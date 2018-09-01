@@ -1,5 +1,6 @@
 package ru.supernacho.tkb.tz.moneytransfer.view;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import ru.supernacho.tkb.tz.moneytransfer.App;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
+import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.BeneficiaryRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.adapter.SenderRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.alert.Alert;
@@ -42,6 +44,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     RecyclerView rvBeneficiaryList;
     @BindView(R.id.et_amount_input)
     TextInputEditText etAmount;
+    @BindView(R.id.cl_main_activity)
+    ConstraintLayout clMainActivity;
 
     @Inject
     App app;
@@ -61,6 +65,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     }
 
     private void initViews() {
+        clMainActivity.requestFocus();
         etAmount.setFilters(new InputFilter[]{new DecimalDigitInputFilter(2)});
         etAmount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -75,6 +80,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                     etAmount.setText("");
                     etAmount.append(s.subSequence(1, s.length()));
                 }
+                if(!InputChecker.checkAmount(s.toString())) etAmount.setError("Wrong amount for transfer");
             }
 
             @Override
@@ -86,7 +92,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     private void initRecyclerViews() {
         SnapHelper senderSnapHelper = new PagerSnapHelper();
-        SnapHelper beneSnapHelper = new PagerSnapHelper();
+        SnapHelper beneficiarySnapHelper = new PagerSnapHelper();
         LinearLayoutManager senderLayoutManager = new LinearLayoutManager(this);
         LinearLayoutManager beneficiaryLayoutManager = new LinearLayoutManager(this);
         senderLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -98,7 +104,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         rvSenderList.setAdapter(senderRvAdapter);
         rvBeneficiaryList.setAdapter(beneficiaryRvAdapter);
         senderSnapHelper.attachToRecyclerView(rvSenderList);
-        beneSnapHelper.attachToRecyclerView(rvBeneficiaryList);
+        beneficiarySnapHelper.attachToRecyclerView(rvBeneficiaryList);
     }
 
     @ProvidePresenter
@@ -111,7 +117,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @OnClick(R.id.btn_transfer)
     public void onClickTransfer() {
         presenter.startTransfer(etAmount.getText().toString());
-        etAmount.setText(null);
     }
 
     @Override
@@ -129,6 +134,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     public void viewResult(Card sender, Card beneficiary, String amount) {
         Alert.showResult(this, sender, beneficiary, amount);
         updateAdapters();
+        etAmount.setText(null);
+        etAmount.clearFocus();
     }
 
     @Override
@@ -136,7 +143,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         String msg;
         switch (errorType) {
             case ErrorTypes.CARD_DATA_ERROR:
-                msg = "Wrong data in cards field";
+                msg = "Wrong data in cards field or amount for transfer";
                 break;
             default:
                 msg = "No such error code";
