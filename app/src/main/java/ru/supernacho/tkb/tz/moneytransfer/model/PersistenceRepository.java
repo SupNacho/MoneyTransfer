@@ -23,38 +23,24 @@ public class PersistenceRepository implements IPersistenceRepository {
     }
 
     @Override
-    public List<Card> getSenderCards() {
-        return collection.getSenderCards();
-    }
-
-    @Override
-    public List<Card> getBeneficiaryCards() {
-        return collection.getBeneficiaryCards();
-    }
-
-    @Override
     public void addCards(Card newSenderCard, Card newBeneficiaryCard, String userToken) {
-        boolean isNewSender = collection.checkSenderDubles(newSenderCard);
-        boolean isNewBeneficiary = collection.checkBeneDubles(newBeneficiaryCard);
-//        if (newSenderCard.isNewCard()) isNewSender = collection.addToSenders(newSenderCard);
-//        if (newBeneficiaryCard.isNewCard()) isNewbeneficiary = collection.addToBeneficiary(newBeneficiaryCard);
+        boolean isNewSender = collection.addToSenders(newSenderCard);
+        boolean isNewBeneficiary = collection.addToBeneficiary(newBeneficiaryCard);
         if (isNewSender || isNewBeneficiary)
             persistenceIO.saveData(userToken, gson.toJson(collection));
     }
 
     @Override
-    public Observable<Boolean> getCardsData(String userToken) {
+    public Observable<CardsCollection> getCardsData(String userToken) {
         return Observable.create(emit -> {
             String result = persistenceIO.loadCardsData(userToken);
             updateCollection(gson.fromJson(result, CardsCollection.class));
-            emit.onNext(true);
+            emit.onNext(collection);
         });
     }
 
     private void updateCollection(CardsCollection tempCollection) {
         collection.addAllToSenders(tempCollection.getSenderCards());
-        collection.addToSenders(new Card(true));
         collection.addAllToBeneficiary(tempCollection.getBeneficiaryCards());
-        collection.addToBeneficiary(new Card(true));
     }
 }

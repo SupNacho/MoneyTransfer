@@ -10,7 +10,7 @@ import java.util.Stack;
 import javax.inject.Inject;
 
 import io.reactivex.Scheduler;
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.supernacho.tkb.tz.moneytransfer.model.IPersistenceRepository;
 import ru.supernacho.tkb.tz.moneytransfer.model.IUserRepository;
@@ -26,6 +26,7 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     private Stack<Integer> senderPosHolder;
     private Stack<Integer> beneficiaryPosHolder;
     private CardsCollection cardsCollection;
+    private Disposable disposableGetter;
 
     @Inject
     IPersistenceRepository repository;
@@ -46,6 +47,12 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
         getViewState().requestSignIn();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposableGetter != null && !disposableGetter.isDisposed()) disposableGetter.dispose();
+    }
+
     public void setSenderPos(int index){
         senderPosHolder.push(index);
     }
@@ -62,8 +69,8 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     }
 
     public void startTransfer(String amount){
-        Card senderCard = repository.getSenderCards().get(senderPosHolder.peek());
-        Card beneficiaryCard = repository.getBeneficiaryCards().get(beneficiaryPosHolder.peek());
+        Card senderCard = cardsCollection.getSenderCards().get(senderPosHolder.peek());
+        Card beneficiaryCard = cardsCollection.getBeneficiaryCards().get(beneficiaryPosHolder.peek());
         if (checkSenderReady(senderCard) && checkBeneficiaryReady(beneficiaryCard)) {
             getViewState().viewResult(senderCard, beneficiaryCard, amount);
             addCards(senderCard, beneficiaryCard);
@@ -94,34 +101,27 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
     }
 
     public List<Card> getSenderCards(){
-        return repository.getSenderCards();
+        return cardsCollection.getSenderCards();
     }
 
     public List<Card> getBeneficiaryCards(){
-        return repository.getBeneficiaryCards();
+        return cardsCollection.getBeneficiaryCards();
     }
 
     public void getCardsData(){
-        repository.getCardsData(userRepository.getCurrentUser().getToken())
+        disposableGetter = repository.getCardsData(userRepository.getCurrentUser().getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)
-                .subscribe(new DisposableObserver<Boolean>() {
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-                        if (aBoolean) {
-                            getViewState().updateAdapters();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        dispose();
-                    }
+                .subscribe(receivedCardsCollection -> {
+                    updateCollection(receivedCardsCollection);
+                    getViewState().updateAdapters();
                 });
+    }
+
+    private void updateCollection(CardsCollection receivedCardsCollection) {
+        cardsCollection.addAllToSenders(receivedCardsCollection.getSenderCards());
+        cardsCollection.addAllToBeneficiary(receivedCardsCollection.getBeneficiaryCards());
+        cardsCollection.addToSenders(new Card(true));
+        cardsCollection.addToBeneficiary(new Card(true));
     }
 }

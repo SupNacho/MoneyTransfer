@@ -2,10 +2,8 @@ package ru.supernacho.tkb.tz.moneytransfer.model.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class CardsCollection {
     private static String SENDERS = "senders";
@@ -30,21 +28,14 @@ public class CardsCollection {
         return false;
     }
 
-    public boolean checkSenderDubles(Card card){
-        return !getSenderCards().subList(0, getSenderCards().size()-2).contains(card);
-    }
-    public boolean checkBeneDubles(Card card){
-        return !getBeneficiaryCards().subList(0, getBeneficiaryCards().size()-2).contains(card);
-    }
-
     public void addAllToSenders(List<Card> list){
         getSenderCards().clear();
-        getSenderCards().addAll(new HashSet<>(list));
+        getSenderCards().addAll(list);
     }
 
     public void addAllToBeneficiary(List<Card> list){
         getBeneficiaryCards().clear();
-        getBeneficiaryCards().addAll(new HashSet<>(list));
+        getBeneficiaryCards().addAll(list);
     }
 
     public boolean addToBeneficiary(Card card){
