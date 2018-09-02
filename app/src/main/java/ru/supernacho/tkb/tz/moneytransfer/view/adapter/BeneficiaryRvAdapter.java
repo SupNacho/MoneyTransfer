@@ -15,7 +15,7 @@ public class BeneficiaryRvAdapter extends AbstractRvAdapter {
     @Override
     void prepareNewCardData(@NonNull NewCardView holder, Card card) {
         holder.setCard(card);
-        holder.etCardNumber.setText(null);
+        holder.etCardNumber.setText(card.getNumber());
         holder.etCardNumber.clearFocus();
     }
 

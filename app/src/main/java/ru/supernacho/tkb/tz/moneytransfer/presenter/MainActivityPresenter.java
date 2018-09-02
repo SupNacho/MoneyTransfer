@@ -21,7 +21,7 @@ import ru.supernacho.tkb.tz.moneytransfer.view.ErrorTypes;
 import ru.supernacho.tkb.tz.moneytransfer.view.MainView;
 
 @InjectViewState
-public class MainActivityPresenter extends MvpPresenter<MainView> implements IMainPresenter{
+public class MainActivityPresenter extends MvpPresenter<MainView> implements IMainPresenter {
     private Scheduler uiScheduler;
     private RecyclerPositionHolder senderPosHolder;
     private RecyclerPositionHolder beneficiaryPosHolder;
@@ -53,22 +53,28 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
         if (disposableGetter != null && !disposableGetter.isDisposed()) disposableGetter.dispose();
     }
 
-    public void setSenderPos(int index){
+    @Override
+    public void setSenderPos(int index) {
         senderPosHolder.setPosition(index);
     }
 
-    public void checkSenderPos(int index){
+    @Override
+    public void checkSenderPos(int index) {
         senderPosHolder.doCorrection(index);
     }
-    public void setBeneficiaryPos(int index){
+
+    @Override
+    public void setBeneficiaryPos(int index) {
         beneficiaryPosHolder.setPosition(index);
     }
 
-    public void checkBeneficiaryPos(int index){
+    @Override
+    public void checkBeneficiaryPos(int index) {
         beneficiaryPosHolder.doCorrection(index);
     }
 
-    public void startTransfer(String amount){
+    @Override
+    public void startTransfer(String amount) {
         Card senderCard = cardsCollection.getSenderCards().get(senderPosHolder.getActualPosition());
         Card beneficiaryCard = cardsCollection.getBeneficiaryCards().get(beneficiaryPosHolder.getActualPosition());
         if (InputChecker.checkSenderReady(senderCard) && InputChecker.checkBeneficiaryReady(beneficiaryCard)
@@ -86,20 +92,24 @@ public class MainActivityPresenter extends MvpPresenter<MainView> implements IMa
         getCardsData();
     }
 
-    public void setUser(String token){
+    @Override
+    public void setUser(String token) {
         userRepository.setUser(token);
         getCardsData();
     }
 
-    public List<Card> getSenderCards(){
+    @Override
+    public List<Card> getSenderCards() {
         return cardsCollection.getSenderCards();
     }
 
-    public List<Card> getBeneficiaryCards(){
+    @Override
+    public List<Card> getBeneficiaryCards() {
         return cardsCollection.getBeneficiaryCards();
     }
 
-    public void getCardsData(){
+    @Override
+    public void getCardsData() {
         disposableGetter = repository.getCardsData(userRepository.getCurrentUser().getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(uiScheduler)

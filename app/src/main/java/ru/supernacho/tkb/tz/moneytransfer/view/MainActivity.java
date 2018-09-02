@@ -36,6 +36,7 @@ import ru.supernacho.tkb.tz.moneytransfer.view.filters.DecimalDigitInputFilter;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
 
+    private static final String AMOUNT_KEY = "amount";
     private SenderRvAdapter senderRvAdapter;
     private BeneficiaryRvAdapter beneficiaryRvAdapter;
 
@@ -62,7 +63,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         App.getInstance().getAppComponent().inject(this);
         initRecyclerViews();
         initViews();
-        presenter.getCardsData();
+        initData(savedInstanceState);
+    }
+
+    private void initData(Bundle savedInstanceState) {
+        if (savedInstanceState == null) presenter.getCardsData();
+        else etAmount.setText(savedInstanceState.getString(AMOUNT_KEY));
     }
 
     private void initViews() {
@@ -154,6 +160,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                 break;
         }
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(AMOUNT_KEY, etAmount.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 
     private void hideSoftKeyboard() {

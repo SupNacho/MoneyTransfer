@@ -17,18 +17,18 @@ public class SenderRvAdapter extends AbstractRvAdapter {
         holder.setCard(card);
         holder.tvCardNumber.setText(card.getNumber());
         holder.tvBankLabel.setText(card.getBankName());
-        holder.etCacheCVV.setText(null);
+        holder.etCacheCVV.setText(card.getCvv());
         holder.etCacheCVV.clearFocus();
     }
 
     @Override
     void prepareNewCardData(@NonNull NewCardView holder, Card card) {
         holder.setCard(card);
-        holder.etCardNumber.setText(null);
+        holder.etCardNumber.setText(card.getNumber());
         holder.etCardNumber.clearFocus();
-        holder.etCVV.setText(null);
+        holder.etCVV.setText(card.getCvv());
         holder.etCVV.clearFocus();
-        holder.etExpDate.setText(null);
+        holder.etExpDate.setText(card.getExpire());
         holder.etExpDate.clearFocus();
     }
 }
