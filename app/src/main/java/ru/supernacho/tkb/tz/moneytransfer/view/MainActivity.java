@@ -10,6 +10,7 @@ import android.support.v7.widget.SnapHelper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -119,6 +120,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @OnClick(R.id.btn_transfer)
     public void onClickTransfer() {
         presenter.startTransfer(etAmount.getText().toString());
+        hideSoftKeyboard();
     }
 
     @Override
@@ -152,5 +154,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                 break;
         }
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null && getCurrentFocus() != null)
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 }
