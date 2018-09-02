@@ -10,7 +10,6 @@ import android.support.v7.widget.SnapHelper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -24,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.supernacho.tkb.tz.moneytransfer.App;
+import ru.supernacho.tkb.tz.moneytransfer.AppConstants;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
@@ -66,7 +66,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     private void initViews() {
         clMainActivity.requestFocus();
-        etAmount.setFilters(new InputFilter[]{new DecimalDigitInputFilter(2)});
+        etAmount.setFilters(new InputFilter[]{new DecimalDigitInputFilter(AppConstants.DIGITS_AFTER_ZERO)});
         etAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,12 +75,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("++", "sequence" + s.toString() + " start" + start + " count: " + count + " before " + before);
                 if (s.length() > 1 && s.charAt(0) == '0' && s.charAt(1) != '.') {
                     etAmount.setText("");
                     etAmount.append(s.subSequence(1, s.length()));
                 }
-                if(!InputChecker.checkAmount(s.toString())) etAmount.setError("Wrong amount for transfer");
+                if (s.length() > 0) {
+                    if (!InputChecker.checkAmount(s.toString()))
+                        etAmount.setError(getResources().getString(R.string.amount_error));
+                }
             }
 
             @Override
@@ -143,10 +145,10 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         String msg;
         switch (errorType) {
             case ErrorTypes.CARD_DATA_ERROR:
-                msg = "Wrong data in cards field or amount for transfer";
+                msg = getResources().getString(R.string.transaction_input_error);
                 break;
             default:
-                msg = "No such error code";
+                msg = getResources().getString(R.string.error_code_error);
                 break;
         }
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();

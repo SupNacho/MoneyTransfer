@@ -23,11 +23,6 @@ public class BeneficiaryRvAdapter extends AbstractRvAdapter {
     void prepareCachedCardData(@NonNull CachedCardView holder, Card card) {
         holder.setCard(card);
         holder.tvCardNumber.setText(card.getNumber());
-        holder.tvBanklabel.setText(card.getBankName());
-    }
-
-    @Override
-    public int getItemCount() {
-        return cards.size();
+        holder.tvBankLabel.setText(card.getBankName());
     }
 }

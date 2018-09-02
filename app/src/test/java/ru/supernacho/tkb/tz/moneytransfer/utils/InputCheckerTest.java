@@ -23,7 +23,7 @@ public class InputCheckerTest {
     public void testCheckDate() {
         assertEquals("exp date: 01/19", true, InputChecker.checkDate("01/19"));
         assertEquals("exp date: 01/19", true, InputChecker.checkDate("12/19"));
-        assertEquals("exp date: 08/18", true, InputChecker.checkDate("08/18"));
+        assertEquals("exp date: 08/18", false, InputChecker.checkDate("08/18"));
         assertEquals("exp date: 08/38", true, InputChecker.checkDate("08/38"));
         assertEquals("exp date: 01/18", false, InputChecker.checkDate("01/18"));
         assertEquals("exp date: 01/18", false, InputChecker.checkDate("12/17"));
@@ -34,8 +34,9 @@ public class InputCheckerTest {
     public void testCheckCVC() {
         assertEquals("cvc 111", true, InputChecker.checkCVC("111"));
         assertEquals("cvc 365", true, InputChecker.checkCVC("365"));
-        assertEquals("cvc 36", true, InputChecker.checkCVC("36"));
+        assertEquals("cvc 36", false, InputChecker.checkCVC("36"));
         assertEquals("cvc 3652", false, InputChecker.checkCVC("3652"));
+        assertEquals("cvc ttt", false, InputChecker.checkCVC("ttt"));
         assertEquals("cvc null", false, InputChecker.checkCVC(null));
     }
 

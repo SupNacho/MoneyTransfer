@@ -16,7 +16,7 @@ public class SenderRvAdapter extends AbstractRvAdapter {
     void prepareCachedCardData(@NonNull CachedCardView holder, Card card) {
         holder.setCard(card);
         holder.tvCardNumber.setText(card.getNumber());
-        holder.tvBanklabel.setText(card.getBankName());
+        holder.tvBankLabel.setText(card.getBankName());
         holder.etCacheCVV.setText(null);
         holder.etCacheCVV.clearFocus();
     }
@@ -30,10 +30,5 @@ public class SenderRvAdapter extends AbstractRvAdapter {
         holder.etCVV.clearFocus();
         holder.etExpDate.setText(null);
         holder.etExpDate.clearFocus();
-    }
-
-    @Override
-    public int getItemCount() {
-        return cards.size();
     }
 }

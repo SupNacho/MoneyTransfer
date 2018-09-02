@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="card number"/>
+            android:hint="@string/card_num_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_exp_date"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
-            android:hint="MM/YY"/>
+            android:hint="@string/date_hint_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_cvv"
@@ -47,6 +47,6 @@
             android:layout_height="wrap_content"
             android:inputType="numberPassword"
             android:maxLength="3"
-            android:hint="CVV2"/>
+            android:hint="@string/cvv_card_view"/>
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>

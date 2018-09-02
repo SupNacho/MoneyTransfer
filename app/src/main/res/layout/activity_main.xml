@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:text="Sender card"
+        android:text="@string/sender_card_label_activity"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:text="Beneficiary's card"
+        android:text="@string/beneficiary_card_label_activity"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_sender_cards" />
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="Amount"/>
+            android:hint="@string/amount_hint_activity"/>
     </android.support.design.widget.TextInputLayout>
 
     <Button
@@ -73,5 +73,5 @@
         app:layout_constraintTop_toBottomOf="@id/til_transfer_amount"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="Transfer"/>
+        android:text="@string/transfer_btn_activity"/>
 </android.support.constraint.ConstraintLayout>

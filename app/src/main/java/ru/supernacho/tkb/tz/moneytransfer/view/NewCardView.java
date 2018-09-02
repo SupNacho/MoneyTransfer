@@ -1,5 +1,6 @@
 package ru.supernacho.tkb.tz.moneytransfer.view;
 
+import android.content.res.Resources;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.supernacho.tkb.tz.moneytransfer.AppConstants;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
@@ -20,8 +22,8 @@ import ru.tinkoff.decoro.watchers.FormatWatcher;
 import ru.tinkoff.decoro.watchers.MaskFormatWatcher;
 
 public class NewCardView extends RecyclerView.ViewHolder{
-    private static final String EXP_DATE_MASK = "__" + "/" + "__";
     private Card card;
+    private Resources res;
     private MainActivityPresenter presenter;
     private boolean isBeneficiary;
     @BindView(R.id.et_card_number)
@@ -36,12 +38,13 @@ public class NewCardView extends RecyclerView.ViewHolder{
         ButterKnife.bind(this, itemView);
         this.presenter = presenter;
         this.isBeneficiary = isBeneficiary;
+        this.res = itemView.getResources();
         setViewsVisibility(isBeneficiary);
         initViews();
     }
 
     private void initViews() {
-        Slot[] expireDateSlots = new UnderscoreDigitSlotsParser().parseSlots(EXP_DATE_MASK);
+        Slot[] expireDateSlots = new UnderscoreDigitSlotsParser().parseSlots(AppConstants.EXP_DATE_MASK);
         FormatWatcher expDateFormatWatcher = new MaskFormatWatcher(MaskImpl.createTerminated(expireDateSlots));
         expDateFormatWatcher.installOn(etExpDate);
         etCardNumber.addTextChangedListener(new TextWatcher() {
@@ -52,15 +55,16 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 11) {
-                    if (InputChecker.checkCard(s.toString())) {
-                        Log.d("++", s.toString());
-                        card.setNumber(s.toString());
+                if (s.length() > 0) {
+                    if (s.length() > 11) {
+                        if (InputChecker.checkCard(s.toString())) {
+                            card.setNumber(s.toString());
+                        } else {
+                            etCardNumber.setError(res.getString(R.string.card_number_error));
+                        }
                     } else {
-                        etCardNumber.setError("Error in card number");
+                        etCardNumber.setError(res.getString(R.string.card_number_to_short));
                     }
-                } else {
-                    etCardNumber.setError("Card number to short");
                 }
             }
 
@@ -78,10 +82,12 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (InputChecker.checkDate(s.toString())){
-                    card.setExpire(s.toString());
-                } else {
-                    etExpDate.setError("Wrong date");
+                if (s.length() > 0) {
+                    if (InputChecker.checkDate(s.toString())) {
+                        card.setExpire(s.toString());
+                    } else {
+                        etExpDate.setError(res.getString(R.string.card_exp_date_error));
+                    }
                 }
             }
 
@@ -99,10 +105,12 @@ public class NewCardView extends RecyclerView.ViewHolder{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (InputChecker.checkCVC(s.toString())){
-                    card.setCvv(s.toString());
-                } else {
-                    etCVV.setError("CVV to short");
+                if (s.length() > 0) {
+                    if (InputChecker.checkCVC(s.toString())) {
+                        card.setCvv(s.toString());
+                    } else {
+                        etCVV.setError(res.getString(R.string.cvv_to_short));
+                    }
                 }
             }
 

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CardsCollection {
-    private static String SENDERS = "senders";
-    private static String RECEIVERS = "receivers";
+    private static final String SENDERS = "senders";
+    private static final String RECEIVERS = "receivers";
     private Map<String, List<Card>> collection;
 
     public CardsCollection() {

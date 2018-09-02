@@ -4,12 +4,12 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.supernacho.tkb.tz.moneytransfer.AppConstants;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
@@ -20,12 +20,11 @@ import ru.tinkoff.decoro.watchers.FormatWatcher;
 import ru.tinkoff.decoro.watchers.MaskFormatWatcher;
 
 public class CachedCardView extends RecyclerView.ViewHolder {
-    private static final String CARD_NUMBER_MASK = "____ ____ ____ ____";
     private Card card;
     @BindView(R.id.tv_card_number)
     public TextView tvCardNumber;
     @BindView(R.id.tv_bank_label)
-    public TextView tvBanklabel;
+    public TextView tvBankLabel;
     @BindView(R.id.et_cached_cvv)
     public TextInputEditText etCacheCVV;
     private MainActivityPresenter presenter;
@@ -41,13 +40,11 @@ public class CachedCardView extends RecyclerView.ViewHolder {
         itemView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
-                Log.d("++", "Attach "+getAdapterPosition());
                 setPos();
             }
 
             @Override
             public void onViewDetachedFromWindow(View v) {
-                Log.d("++", "Detach "+getAdapterPosition());
                 checkPos();
         }
         });
@@ -57,7 +54,7 @@ public class CachedCardView extends RecyclerView.ViewHolder {
         if (isBeneficiary) etCacheCVV.setVisibility(View.GONE);
         FormatWatcher formatWatcher =
                 new MaskFormatWatcher(MaskImpl.createTerminated(new UnderscoreDigitSlotsParser()
-                        .parseSlots(CARD_NUMBER_MASK)));
+                        .parseSlots(AppConstants.CARD_NUMBER_MASK)));
         formatWatcher.installOn(tvCardNumber);
         etCacheCVV.addTextChangedListener(new TextWatcher() {
             @Override
@@ -67,11 +64,12 @@ public class CachedCardView extends RecyclerView.ViewHolder {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 2 && InputChecker.checkCVC(s.toString())) {
-                    card.setCvv(s.toString());
-                    etCacheCVV.clearFocus();
-                } else {
-                    etCacheCVV.setError("CVV to short");
+                if (s.length() > 0) {
+                    if (InputChecker.checkCVC(s.toString())) {
+                        card.setCvv(s.toString());
+                    } else {
+                        etCacheCVV.setError(itemView.getResources().getString(R.string.cvv_to_short));
+                    }
                 }
             }
 

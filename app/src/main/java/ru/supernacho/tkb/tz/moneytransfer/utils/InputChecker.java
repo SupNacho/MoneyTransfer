@@ -6,11 +6,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import ru.supernacho.tkb.tz.moneytransfer.AppConstants;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 
 public class InputChecker {
+
     public static boolean checkCard(String cardNumber) {
-        if (cardNumber != null && cardNumber.length() > 12) {
+        if (cardNumber != null && cardNumber.length() > AppConstants.CARD_NUMBER_LENGTH) {
             char[] numbers = cardNumber.toCharArray();
             int[] digits = new int[numbers.length];
             for (int i = 0; i < numbers.length; i++) {
@@ -47,13 +49,19 @@ public class InputChecker {
     }
 
     public static boolean checkCVC(String cvc) {
-        return cvc != null && cvc.toCharArray().length < 4;
+        try{
+            Integer.parseInt(cvc);
+            return cvc != null && !cvc.equals("") && cvc.length() == AppConstants.CVC_LENGTH;
+        } catch (NumberFormatException e){
+            return false;
+        }
     }
 
     public static boolean checkAmount(String amount){
         try {
             String[] amountSplit = amount.split("\\.");
-            boolean twoDigitAfterDot = amountSplit.length < 2 || (amountSplit[1].length() < 3);
+            boolean twoDigitAfterDot = amountSplit.length < AppConstants.DIGITS_AFTER_ZERO ||
+                    (amountSplit[1].length() < AppConstants.DIGITS_AFTER_ZERO + 1);
             double checkAmount = Double.parseDouble(amount);
             boolean positive = checkAmount > 0;
             return twoDigitAfterDot && positive;

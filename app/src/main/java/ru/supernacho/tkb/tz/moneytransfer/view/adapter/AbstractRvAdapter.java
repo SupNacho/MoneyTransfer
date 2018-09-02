@@ -16,7 +16,7 @@ import ru.supernacho.tkb.tz.moneytransfer.view.NewCardView;
 
 public abstract class AbstractRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private MainActivityPresenter presenter;
-    List<Card> cards;
+    private List<Card> cards;
     private boolean isBeneficiary;
 
     AbstractRvAdapter(MainActivityPresenter presenter, boolean isBeneficiary) {
