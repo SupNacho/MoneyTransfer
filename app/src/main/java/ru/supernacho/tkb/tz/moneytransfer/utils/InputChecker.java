@@ -58,16 +58,17 @@ public class InputChecker {
     }
 
     public static boolean checkAmount(String amount){
-        try {
-            String[] amountSplit = amount.split("\\.");
-            boolean twoDigitAfterDot = amountSplit.length < AppConstants.DIGITS_AFTER_ZERO ||
-                    (amountSplit[1].length() < AppConstants.DIGITS_AFTER_ZERO + 1);
-            double checkAmount = Double.parseDouble(amount);
-            boolean positive = checkAmount > 0;
-            return twoDigitAfterDot && positive;
-        } catch (NumberFormatException e){
-            return false;
-        }
+
+            try {
+                String[] amountSplit = amount.split("\\.");
+                boolean twoDigitAfterDot = amountSplit.length < AppConstants.DIGITS_AFTER_ZERO ||
+                        (amountSplit[1].length() < AppConstants.DIGITS_AFTER_ZERO + 1);
+                double checkAmount = Double.parseDouble(amount);
+                boolean positive = checkAmount > 0;
+                return twoDigitAfterDot && positive;
+            } catch (NumberFormatException e) {
+                return false;
+            }
     }
 
     public static boolean checkSenderReady(Card sender){

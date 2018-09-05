@@ -1,5 +1,8 @@
 package ru.supernacho.tkb.tz.moneytransfer.model;
 
+import android.databinding.ObservableField;
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import javax.inject.Inject;
@@ -10,6 +13,8 @@ import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 
 public class PersistenceRepository implements IPersistenceRepository {
     private CardsCollection collection = new CardsCollection();
+    private final ObservableField<String> amountField = new ObservableField<>();
+    private final ObservableField<CardsCollection> cards = new ObservableField<>();
     private Gson gson;
 
     @Inject
@@ -40,5 +45,13 @@ public class PersistenceRepository implements IPersistenceRepository {
     private void updateCollection(CardsCollection tempCollection) {
         collection.addAllToSenders(tempCollection.getSenderCards());
         collection.addAllToBeneficiary(tempCollection.getBeneficiaryCards());
+    }
+
+    public ObservableField<String> getAmountField() {
+        return amountField;
+    }
+
+    public void click(){
+        Log.d("++", " Amount in repo: " + amountField.get());
     }
 }
