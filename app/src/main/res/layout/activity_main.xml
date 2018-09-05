@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    android:id="@+id/cl_main_activity"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.MainActivity">
+    <data>
+        <variable
+            name="mainModel"
+            type="ru.supernacho.tkb.tz.moneytransfer.viewmodel.MainViewModel"/>
+    </data>
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/cl_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    tools:context=".view.MainActivity">
+    android:focusableInTouchMode="true">
 
     <TextView
         android:id="@+id/tv_sender_card_label"
@@ -62,6 +68,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
+            android:text="@={mainModel.amountField}"
+            cursorPosition="@{mainModel.amountField}"
             android:hint="@string/amount_hint_activity"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -75,3 +83,4 @@
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/transfer_btn_activity"/>
 </android.support.constraint.ConstraintLayout>
+</layout>
