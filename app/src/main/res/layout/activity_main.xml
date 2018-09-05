@@ -70,6 +70,7 @@
             android:inputType="numberDecimal"
             android:text="@={mainModel.amountField}"
             cursorPosition="@{mainModel.amountField}"
+            limitDigitAfterDot="@{mainModel.amountField}"
             android:hint="@string/amount_hint_activity"/>
     </android.support.design.widget.TextInputLayout>
 
