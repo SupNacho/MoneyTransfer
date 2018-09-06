@@ -4,7 +4,10 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
 
+import javax.inject.Inject;
+
 import ru.supernacho.tkb.tz.moneytransfer.App;
+import ru.supernacho.tkb.tz.moneytransfer.model.IPersistenceRepository;
 import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceIO;
 import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceRepository;
 
@@ -12,10 +15,11 @@ public class MainViewModel extends ViewModel {
 
     public final ObservableField<Boolean> amountAccepted;
     public final ObservableField<String> amountField;
-    private PersistenceRepository repository;
+    private IPersistenceRepository repository;
 
-    public MainViewModel() {
-        this.repository = new PersistenceRepository(new PersistenceIO(App.getInstance()));
+    @Inject
+    public MainViewModel(IPersistenceRepository repository) {
+        this.repository = repository;
         this.amountAccepted = new ObservableField<>(false);
         this.amountField = repository.getAmountField();
         amountField.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {

@@ -40,6 +40,7 @@ import ru.supernacho.tkb.tz.moneytransfer.view.adapter.SenderRvAdapter;
 import ru.supernacho.tkb.tz.moneytransfer.view.alert.Alert;
 import ru.supernacho.tkb.tz.moneytransfer.view.filters.DecimalDigitInputFilter;
 import ru.supernacho.tkb.tz.moneytransfer.viewmodel.MainViewModel;
+import ru.supernacho.tkb.tz.moneytransfer.viewmodel.factory.ViewModelFactory;
 
 public class MainActivity extends AppCompatActivity/*MvpAppCompatActivity implements MainView*/ {
 //
@@ -63,12 +64,15 @@ public class MainActivity extends AppCompatActivity/*MvpAppCompatActivity implem
 //    MainActivityPresenter presenter;
     private ActivityMainBinding binding;
     private MainViewModel mainViewModel;
+    @Inject
+    ViewModelFactory viewModelFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getInstance().getAppComponent().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel.class);
         binding.setMainModel(mainViewModel);
 //        setContentView(R.layout.activity_main);
 //        ButterKnife.bind(this);
