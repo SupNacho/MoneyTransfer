@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class = "NewCardBinding">
+        <variable
+            name="cardModel"
+            type="ru.supernacho.tkb.tz.moneytransfer.viewmodel.CardViewModel"/>
+    </data>
+<android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -16,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:text="@={cardModel.cardNumber}"
             android:hint="@string/card_num_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -31,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
+            android:text="@={cardModel.expDate}"
             android:hint="@string/date_hint_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -47,6 +55,8 @@
             android:layout_height="wrap_content"
             android:inputType="numberPassword"
             android:maxLength="3"
+            android:text="@={cardModel.cVv}"
             android:hint="@string/cvv_card_view"/>
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>
+</layout>
