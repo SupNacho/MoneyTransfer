@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text="@={cardModel.cardNumber}"
+            setError="@{cardModel.cardNumber}"
             android:hint="@string/card_num_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -39,6 +40,7 @@
             android:layout_height="wrap_content"
             android:inputType="date"
             android:text="@={cardModel.expDate}"
+            setError="@{cardModel.expDate}"
             android:hint="@string/date_hint_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -56,6 +58,7 @@
             android:inputType="numberPassword"
             android:maxLength="3"
             android:text="@={cardModel.cVv}"
+            setError="@{cardModel.cVv}"
             android:hint="@string/cvv_card_view"/>
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>

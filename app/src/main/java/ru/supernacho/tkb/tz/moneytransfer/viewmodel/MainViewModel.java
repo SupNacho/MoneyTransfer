@@ -4,6 +4,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceIO;
 import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceRepository;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
+import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
+import ru.supernacho.tkb.tz.moneytransfer.view.MainView;
 
 public class MainViewModel extends ViewModel {
 
@@ -28,8 +33,11 @@ public class MainViewModel extends ViewModel {
     public final ObservableField<String> amountField;
     public final MutableLiveData<List<CardViewModel>> senderCards = new MutableLiveData<>();
     public final MutableLiveData<List<CardViewModel>> receiverCards = new MutableLiveData<>();
+    private String userToken;
     private IPersistenceRepository repository;
-    int i = 0;
+    private LinearLayoutManager senderLayoutManager;
+    private LinearLayoutManager receiverLayoutManager;
+    private MainView mainView;
 
     @Inject
     public MainViewModel(IPersistenceRepository repository) {
@@ -50,11 +58,11 @@ public class MainViewModel extends ViewModel {
                 }
             }
         });
-        getCards(repository);
+        getCards();
     }
 
-    private void getCards(IPersistenceRepository repository) {
-        repository.getCardsData("000")
+    private void getCards() {
+        repository.getCardsData(userToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CardsCollection>() {
@@ -65,16 +73,19 @@ public class MainViewModel extends ViewModel {
 
                     @Override
                     public void onNext(CardsCollection cardsCollection) {
-                        for (Card card : cardsCollection.getSenderCards()) {
-                            Objects.requireNonNull(senderCards.getValue()).add(new CardViewModel(card));
-                        }
                         List<CardViewModel> tmpSenders = Objects.requireNonNull(senderCards.getValue());
+                        tmpSenders.clear();
+                        for (Card card : cardsCollection.getSenderCards()) {
+                            tmpSenders.add(new CardViewModel(card));
+                        }
                         tmpSenders.add(new CardViewModel(new Card(true)));
                         senderCards.setValue(tmpSenders);
-                        for (Card card : cardsCollection.getBeneficiaryCards()) {
-                            Objects.requireNonNull(receiverCards.getValue()).add(new CardViewModel(card));
-                        }
+
                         List<CardViewModel> tmpReceivers = Objects.requireNonNull(receiverCards.getValue());
+                        tmpReceivers.clear();
+                        for (Card card : cardsCollection.getBeneficiaryCards()) {
+                            tmpReceivers.add(new CardViewModel(card));
+                        }
                         tmpReceivers.add(new CardViewModel(new Card(true)));
                         receiverCards.setValue(tmpReceivers);
                     }
@@ -92,11 +103,48 @@ public class MainViewModel extends ViewModel {
     }
 
     public void click() {
-        repository.click();
-        List<CardViewModel> tmpList = senderCards.getValue();
-        tmpList.add(new CardViewModel(new Card("000002" + ++i, "12/15", "STB")));
-        senderCards.setValue(tmpList);
-//        receiverCards.getValue().add(new CardViewModel(new Card("00000" + ++i+i, "12/15", "STB")));
+        Log.d("000", "Sender: " + senderLayoutManager.findFirstCompletelyVisibleItemPosition());
+        Log.d("000", "Receiver: " + receiverLayoutManager.findFirstCompletelyVisibleItemPosition());
 
+        int senderPos = senderLayoutManager.findFirstCompletelyVisibleItemPosition();
+        int receiverPos = receiverLayoutManager.findFirstCompletelyVisibleItemPosition();
+
+        CardViewModel currentSender = senderCards.getValue().get(senderPos);
+        CardViewModel currentReceiver = receiverCards.getValue().get(receiverPos);
+        currentSender.cardNumber.get();
+
+        String senderCardNumber = currentSender.cardNumber.get();
+        String senderCvvNumber = currentSender.cVv.get();
+        String receiverCardNumber = currentReceiver.cardNumber.get();
+        String senderExpDate = currentSender.expDate.get();
+
+        if (InputChecker.checkCard(senderCardNumber) && InputChecker.checkDate(senderExpDate)
+                && InputChecker.checkDate(senderExpDate) && InputChecker.checkCVC(senderCvvNumber)
+                && InputChecker.checkCard(receiverCardNumber) && InputChecker.checkAmount(amountField.get())) {
+            Card senderCard = new Card(senderCardNumber, senderExpDate, "Bank of Tests");
+            Card receiverCard = new Card(receiverCardNumber);
+            repository.addCards(senderCard, receiverCard, userToken);
+            mainView.viewResult(senderCard, receiverCard, amountField.get());
+            getCards();
+        }
+        else Log.d("000", " input errors");
+    }
+
+    public void setManagers(LinearLayoutManager senderManager, LinearLayoutManager receiverManager) {
+        this.senderLayoutManager = senderManager;
+        this.receiverLayoutManager = receiverManager;
+    }
+
+    public String getUserToken() {
+        return userToken;
+    }
+
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
+        getCards();
+    }
+
+    public void setMainView(MainView mainView) {
+        this.mainView = mainView;
     }
 }

@@ -5,19 +5,19 @@ import android.support.v7.app.AlertDialog;
 
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
-import ru.supernacho.tkb.tz.moneytransfer.presenter.MainActivityPresenter;
+import ru.supernacho.tkb.tz.moneytransfer.viewmodel.MainViewModel;
 
 public class Alert {
 
     private static final String DELIMITER = "\n";
     private static final String TOKEN = "12234";
 
-    public static void showUserChooser(Context context, MainActivityPresenter presenter) {
+    public static void showUserChooser(Context context, MainViewModel viewModel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
                 .setTitle(R.string.alert_user_title)
-                .setPositiveButton(R.string.alert_user_btn_positive, (dialog, which) -> presenter.setUser(TOKEN))
-                .setNegativeButton(R.string.alert_user_btn_negative, ((dialog, which) -> presenter.setUser(null)))
+                .setPositiveButton(R.string.alert_user_btn_positive, (dialog, which) -> viewModel.setUserToken(TOKEN))
+                .setNegativeButton(R.string.alert_user_btn_negative, ((dialog, which) -> viewModel.setUserToken(null)))
                 .setCancelable(true)
                 .show();
     }
