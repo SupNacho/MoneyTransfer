@@ -1,10 +1,8 @@
 package ru.supernacho.tkb.tz.moneytransfer.viewmodel;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.databinding.Observable;
 import android.databinding.ObservableField;
-
-import java.util.List;
 
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 
@@ -13,6 +11,7 @@ public class CardViewModel extends ViewModel {
     public ObservableField<String>  expDate = new ObservableField<>();
     public ObservableField<String>  cVv = new ObservableField<>();
     private ObservableField<Boolean>  isNewCard = new ObservableField<>();
+    private MainViewModel mainViewModel;
 
     public CardViewModel() {
     }
@@ -22,6 +21,12 @@ public class CardViewModel extends ViewModel {
         this.expDate.set(card.getExpire());
         this.cVv.set(card.getCvv());
         this.isNewCard.set(card.isNewCard());
+        cardNumber.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                
+            }
+        });
     }
 
     public boolean isNewCard() {
@@ -30,5 +35,13 @@ public class CardViewModel extends ViewModel {
 
     public void setNewCard(boolean newCard) {
         isNewCard.set(newCard);
+    }
+
+    public MainViewModel getMainViewModel() {
+        return mainViewModel;
+    }
+
+    public void setMainViewModel(MainViewModel mainViewModel) {
+        this.mainViewModel = mainViewModel;
     }
 }

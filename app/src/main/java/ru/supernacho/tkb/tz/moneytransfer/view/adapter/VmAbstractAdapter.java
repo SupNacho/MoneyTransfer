@@ -21,10 +21,12 @@ public abstract class VmAbstractAdapter extends RecyclerView.Adapter<RecyclerVie
     protected List<CardViewModel> cards;
     private LayoutInflater layoutInflater;
     private boolean isBeneficiary;
+    private MainViewModel mainViewModel;
 
-    public VmAbstractAdapter(List<CardViewModel> cards, boolean isBeneficiary) {
+    public VmAbstractAdapter(List<CardViewModel> cards, MainViewModel mainViewModel, boolean isBeneficiary) {
         this.cards = cards;
         this.isBeneficiary = isBeneficiary;
+        this.mainViewModel = mainViewModel;
     }
 
     @Override
@@ -52,6 +54,7 @@ public abstract class VmAbstractAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int viewType = holder.getItemViewType();
         CardViewModel cardViewModel = cards.get(position);
+        cardViewModel.setMainViewModel(mainViewModel);
         switch (viewType) {
             case ViewType.NEW_CARD:
                 NewCardView newCardView = (NewCardView) holder;

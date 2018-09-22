@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -18,10 +17,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import ru.supernacho.tkb.tz.moneytransfer.App;
 import ru.supernacho.tkb.tz.moneytransfer.model.IPersistenceRepository;
-import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceIO;
-import ru.supernacho.tkb.tz.moneytransfer.model.PersistenceRepository;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.CardsCollection;
 import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
@@ -29,7 +25,11 @@ import ru.supernacho.tkb.tz.moneytransfer.view.MainView;
 
 public class MainViewModel extends ViewModel {
 
-    public final ObservableField<Boolean> amountAccepted;
+    public final ObservableField<Boolean> buttonVisible = new ObservableField<>(false);
+    public final ObservableField<Boolean> amountAccepted = new ObservableField<>(false);
+    public final ObservableField<Boolean> senderCardAccepted = new ObservableField<>(false);
+    public final ObservableField<Boolean> senderDateAccepted = new ObservableField<>(false);
+    public final ObservableField<Boolean> senderCvvAccepted = new ObservableField<>(false);
     public final ObservableField<String> amountField;
     public final MutableLiveData<List<CardViewModel>> senderCards = new MutableLiveData<>();
     public final MutableLiveData<List<CardViewModel>> receiverCards = new MutableLiveData<>();
@@ -42,7 +42,6 @@ public class MainViewModel extends ViewModel {
     @Inject
     public MainViewModel(IPersistenceRepository repository) {
         this.repository = repository;
-        this.amountAccepted = new ObservableField<>(false);
         this.amountField = repository.getAmountField();
         this.senderCards.setValue(new ArrayList<>());
         this.receiverCards.setValue(new ArrayList<>());
@@ -58,7 +57,31 @@ public class MainViewModel extends ViewModel {
                 }
             }
         });
+
+        Observable.OnPropertyChangedCallback callback = new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                buttonVisible.set(checkCredentials());
+            }
+        };
+
+        senderCardAccepted.addOnPropertyChangedCallback(callback);
+        senderCvvAccepted.addOnPropertyChangedCallback(callback);
+        senderDateAccepted.addOnPropertyChangedCallback(callback);
+        amountAccepted.addOnPropertyChangedCallback(callback);
         getCards();
+    }
+
+    private boolean checkCredentials(){
+        return senderCardAccepted.get() && senderDateAccepted.get() && senderCvvAccepted.get() && amountAccepted.get();
+    }
+
+    private void clearTransferState(){
+        amountField.set("");
+        senderCardAccepted.set(false);
+        senderDateAccepted.set(false);
+        senderCvvAccepted.set(false);
+        amountAccepted.set(false);
     }
 
     private void getCards() {
@@ -126,6 +149,7 @@ public class MainViewModel extends ViewModel {
             repository.addCards(senderCard, receiverCard, userToken);
             mainView.viewResult(senderCard, receiverCard, amountField.get());
             getCards();
+            clearTransferState();
         }
         else Log.d("000", " input errors");
     }

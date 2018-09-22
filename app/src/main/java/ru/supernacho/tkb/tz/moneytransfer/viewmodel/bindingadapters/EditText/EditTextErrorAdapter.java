@@ -6,34 +6,54 @@ import android.widget.EditText;
 import ru.supernacho.tkb.tz.moneytransfer.App;
 import ru.supernacho.tkb.tz.moneytransfer.R;
 import ru.supernacho.tkb.tz.moneytransfer.utils.InputChecker;
+import ru.supernacho.tkb.tz.moneytransfer.viewmodel.MainViewModel;
 
 
 public class EditTextErrorAdapter {
-    @BindingAdapter("setError")
-    public static void setErrorToField(EditText editText, String string) {
+    @BindingAdapter({"setError", "setViewModel"})
+    public static void setErrorToField(EditText editText, String string, MainViewModel mainViewModel) {
         if (string != null) {
             switch (editText.getId()) {
                 case R.id.et_amount_input:
-                    setError(editText, InputChecker.checkAmount(string), R.string.amount_error);
+                    setError(editText, InputChecker.checkAmount(string), R.string.amount_error, mainViewModel);
                     break;
                 case R.id.et_cvv:
-                    setError(editText, InputChecker.checkCVC(string), R.string.cvv_to_short);
+                    setError(editText, InputChecker.checkCVC(string), R.string.cvv_to_short, mainViewModel);
                     break;
                 case R.id.et_cached_cvv:
-                    setError(editText, InputChecker.checkCVC(string), R.string.cvv_to_short);
+                    setError(editText, InputChecker.checkCVC(string), R.string.cvv_to_short, mainViewModel);
                     break;
                 case R.id.et_card_number:
-                    setError(editText, InputChecker.checkCard(string), R.string.card_number_error);
+                    setError(editText, InputChecker.checkCard(string), R.string.card_number_error, mainViewModel);
                     break;
                 case R.id.et_exp_date:
-                    setError(editText, InputChecker.checkDate(string), R.string.card_exp_date_error);
+                    setError(editText, InputChecker.checkDate(string), R.string.card_exp_date_error, mainViewModel);
                     break;
             }
         }
     }
 
-    private static void setError(EditText editText, boolean b, int errorResource) {
+    private static void setError(EditText editText, boolean b, int errorResource, MainViewModel mainViewModel) {
         if (!b)
             editText.setError(App.getInstance().getApplicationContext().getResources().getString(errorResource));
+        else {
+            switch (editText.getId()) {
+                case R.id.et_amount_input:
+                    mainViewModel.amountAccepted.set(true);
+                    break;
+                case R.id.et_cvv:
+                    mainViewModel.senderCvvAccepted.set(true);
+                    break;
+                case R.id.et_cached_cvv:
+                    mainViewModel.senderCvvAccepted.set(true);
+                    break;
+                case R.id.et_card_number:
+                    mainViewModel.senderCardAccepted.set(true);
+                    break;
+                case R.id.et_exp_date:
+                    mainViewModel.senderDateAccepted.set(true);
+                    break;
+            }
+        }
     }
 }

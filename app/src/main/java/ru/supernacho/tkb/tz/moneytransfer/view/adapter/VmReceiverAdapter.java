@@ -5,6 +5,6 @@ import ru.supernacho.tkb.tz.moneytransfer.viewmodel.MainViewModel;
 public class VmReceiverAdapter extends VmAbstractAdapter {
 
     public VmReceiverAdapter(MainViewModel mainViewModel) {
-        super(mainViewModel.receiverCards.getValue(), true);
+        super(mainViewModel.receiverCards.getValue(), mainViewModel,true);
     }
 }
