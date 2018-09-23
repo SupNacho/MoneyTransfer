@@ -73,6 +73,7 @@
             limitDigitAfterDot="@{mainModel.amountField}"
             setError="@{mainModel.amountField}"
             setViewModel="@{mainModel}"
+            isNewCard="@{mainModel.buttonVisible}"
             android:hint="@string/amount_hint_activity"/>
     </android.support.design.widget.TextInputLayout>
 

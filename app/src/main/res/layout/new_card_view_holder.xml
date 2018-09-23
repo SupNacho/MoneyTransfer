@@ -25,6 +25,7 @@
             android:text="@={cardModel.cardNumber}"
             setError="@{cardModel.cardNumber}"
             setViewModel="@{cardModel.mainViewModel}"
+            isNewCard="@{true}"
             android:hint="@string/card_num_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -43,6 +44,7 @@
             android:text="@={cardModel.expDate}"
             setError="@{cardModel.expDate}"
             setViewModel="@{cardModel.mainViewModel}"
+            isNewCard="@{true}"
             android:hint="@string/date_hint_card_view"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -62,6 +64,7 @@
             android:text="@={cardModel.cVv}"
             setError="@{cardModel.cVv}"
             setViewModel="@{cardModel.mainViewModel}"
+            isNewCard="@{true}"
             android:hint="@string/cvv_card_view"/>
     </android.support.design.widget.TextInputLayout>
 </android.support.constraint.ConstraintLayout>
