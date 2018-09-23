@@ -73,7 +73,7 @@
             limitDigitAfterDot="@{mainModel.amountField}"
             setError="@{mainModel.amountField}"
             setViewModel="@{mainModel}"
-            isNewCard="@{mainModel.buttonVisible}"
+            isNewCard="@{false}"
             android:hint="@string/amount_hint_activity"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -86,7 +86,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/transfer_btn_activity"
-        android:enabled="@{mainModel.buttonVisible ? true : false}"
+        android:enabled="@{safeUnbox(mainModel.buttonVisible) ? true : false}"
         android:onClick="@{(v) -> mainModel.click()}"/>
 </android.support.constraint.ConstraintLayout>
 </layout>

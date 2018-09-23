@@ -1,9 +1,7 @@
 package ru.supernacho.tkb.tz.moneytransfer.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
-import android.databinding.Observable;
 import android.databinding.ObservableField;
-import android.util.Log;
 
 import ru.supernacho.tkb.tz.moneytransfer.model.entity.Card;
 

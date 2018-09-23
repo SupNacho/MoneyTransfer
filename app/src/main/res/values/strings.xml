@@ -16,10 +16,7 @@
     <!--Cards errors-->
     <string name="cvv_to_short">CVV to short</string>
     <string name="amount_error">Wrong amount for transfer</string>
-    <string name="transaction_input_error">Wrong data in cards fields or amount for transfer</string>
-    <string name="error_code_error">No such error code</string>
     <string name="card_number_error">Error in card number</string>
-    <string name="card_number_to_short">Card number to short</string>
     <string name="card_exp_date_error">Wrong date</string>
 
     <!--Views resources-->

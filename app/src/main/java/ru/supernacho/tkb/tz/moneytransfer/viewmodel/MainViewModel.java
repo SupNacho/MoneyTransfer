@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +57,11 @@ public class MainViewModel extends ViewModel {
             }
         });
 
+        initButtonStateCheckers();
+        getCards();
+    }
+
+    private void initButtonStateCheckers() {
         Observable.OnPropertyChangedCallback callback = new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
@@ -69,7 +73,6 @@ public class MainViewModel extends ViewModel {
         senderCvvAccepted.addOnPropertyChangedCallback(callback);
         senderDateAccepted.addOnPropertyChangedCallback(callback);
         amountAccepted.addOnPropertyChangedCallback(callback);
-        getCards();
     }
 
     private boolean checkCredentials(){
@@ -97,19 +100,11 @@ public class MainViewModel extends ViewModel {
                     @Override
                     public void onNext(CardsCollection cardsCollection) {
                         List<CardViewModel> tmpSenders = Objects.requireNonNull(senderCards.getValue());
-                        tmpSenders.clear();
-                        for (Card card : cardsCollection.getSenderCards()) {
-                            tmpSenders.add(new CardViewModel(card));
-                        }
-                        tmpSenders.add(new CardViewModel(new Card(true)));
+                        updateCardList(tmpSenders, cardsCollection.getSenderCards());
                         senderCards.setValue(tmpSenders);
 
                         List<CardViewModel> tmpReceivers = Objects.requireNonNull(receiverCards.getValue());
-                        tmpReceivers.clear();
-                        for (Card card : cardsCollection.getBeneficiaryCards()) {
-                            tmpReceivers.add(new CardViewModel(card));
-                        }
-                        tmpReceivers.add(new CardViewModel(new Card(true)));
+                        updateCardList(tmpReceivers, cardsCollection.getBeneficiaryCards());
                         receiverCards.setValue(tmpReceivers);
                     }
 
@@ -125,22 +120,30 @@ public class MainViewModel extends ViewModel {
                 });
     }
 
-    public void click() {
-        Log.d("000", "Sender: " + senderLayoutManager.findFirstCompletelyVisibleItemPosition());
-        Log.d("000", "Receiver: " + receiverLayoutManager.findFirstCompletelyVisibleItemPosition());
+    private void updateCardList(List<CardViewModel> tmpList, List<Card> cardList) {
+        tmpList.clear();
+        for (Card card : cardList) {
+            tmpList.add(new CardViewModel(card));
+        }
+        tmpList.add(new CardViewModel(new Card(true)));
+    }
 
+    public void click() {
         int senderPos = senderLayoutManager.findFirstCompletelyVisibleItemPosition();
         int receiverPos = receiverLayoutManager.findFirstCompletelyVisibleItemPosition();
 
         CardViewModel currentSender = senderCards.getValue().get(senderPos);
         CardViewModel currentReceiver = receiverCards.getValue().get(receiverPos);
-        currentSender.cardNumber.get();
 
         String senderCardNumber = currentSender.cardNumber.get();
         String senderCvvNumber = currentSender.cVv.get();
         String receiverCardNumber = currentReceiver.cardNumber.get();
         String senderExpDate = currentSender.expDate.get();
 
+        checkSaveAndTransfer(senderCardNumber, senderCvvNumber, receiverCardNumber, senderExpDate);
+    }
+
+    private void checkSaveAndTransfer(String senderCardNumber, String senderCvvNumber, String receiverCardNumber, String senderExpDate) {
         if (InputChecker.checkCard(senderCardNumber) && InputChecker.checkDate(senderExpDate)
                 && InputChecker.checkDate(senderExpDate) && InputChecker.checkCVC(senderCvvNumber)
                 && InputChecker.checkCard(receiverCardNumber) && InputChecker.checkAmount(amountField.get())) {
@@ -151,16 +154,12 @@ public class MainViewModel extends ViewModel {
             getCards();
             clearTransferState();
         }
-        else Log.d("000", " input errors");
+        else mainView.showError();
     }
 
     public void setManagers(LinearLayoutManager senderManager, LinearLayoutManager receiverManager) {
         this.senderLayoutManager = senderManager;
         this.receiverLayoutManager = receiverManager;
-    }
-
-    public String getUserToken() {
-        return userToken;
     }
 
     public void setUserToken(String userToken) {

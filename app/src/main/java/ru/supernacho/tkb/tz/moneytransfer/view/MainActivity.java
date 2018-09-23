@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -72,5 +73,10 @@ public class MainActivity extends AppCompatActivity implements MainView{
     @Override
     public void viewResult(Card sender, Card beneficiary, String amount) {
         Alert.showResult(this, sender, beneficiary, amount);
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(this, "Some Errors in transaction aquired, check your payment credentials.", Toast.LENGTH_LONG).show();
     }
 }
